@@ -16,6 +16,7 @@
 
 html {
   min-height: 100vh;
+  cursor: url("Assets/Cursors/Ghost.cur"), auto;
 }
 
 body {
@@ -31,6 +32,43 @@ body {
   font-weight: normal;
   text-align: center;
   font-size: 6em;
+}
+
+.overlay-text {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  color: #ff6d00;
+  font-family: Creepy, serif;
+}
+
+.overlay-text-small {
+  font-size: 0.3em;
+  display: flex;
+}
+
+.overlay-text.visible {
+  display: flex;
+  flex-direction: column;
+  animation: overlay-grow 500ms forwards;
+}
+
+@keyframes overlay-grow {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 0;
+  }
+
+  to {
+    background-color: rgba(0, 0, 0, 0.8);
+    font-size: 10em;
+  }
 }
 
 .game-info-container {
@@ -50,12 +88,17 @@ body {
   grid-template-columns: repeat(4, auto);
   grid-gap: 10px;
   justify-content: center;
+  perspective: 500px;
 }
 
 .card {
   position: relative;
   height: 175px;
   width: 125px;
+}
+
+.card:hover {
+  cursor: url("Assets/Cursors/GhostHover.cur"), auto;
 }
 
 .card-face {
@@ -70,6 +113,7 @@ body {
   border-radius: 12px;
   border-width: 1px;
   border-style: solid;
+  transition: transform 500ms ease-in-out;
 }
 
 .card.visible .card-back {
@@ -80,13 +124,43 @@ body {
   transform: rotateY(0deg);
 }
 
+.card-matched .card-value {
+  animation: dance 1s linear infinite 500ms;
+}
+
+@keyframes dance {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+
+  25% {
+    transform: rotate(-40deg);
+  }
+
+  75% {
+    transform: rotate(40deg);
+  }
+}
+
 .card-back {
   background-color: black;
   border-color: #ff6d00;
 }
 
 .card-front {
+  background-color: #ffbb89;
+  border-color: #333;
   transform: rotateY(180deg);
+}
+
+.card-value {
+  transform: scale(0.9);
+  transition: transform 100ms ease-in-out;
+}
+
+.card-front:hover .card-value {
+  transform: scale(1);
 }
 
 .cob-web {
@@ -96,7 +170,7 @@ body {
   transition: width 100ms ease-in-out, height 100ms ease-in-out;
 }
 
-.card-back:hover .cob-web {
+.card-face:hover .cob-web {
   width: 52px;
   height: 52px;
 }
@@ -132,4 +206,15 @@ body {
 
 .card-back:hover .spider {
   transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .game-container {
+    grid-template-columns: repeat(2, auto);
+  }
+
+  .game-info-container {
+    flex-direction: column;
+    align-items: center;
+  }
 }
