@@ -1,8 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import Title from "./Title";
 import Info from "./Info";
-import Card from "./Card";
+import CardList from "./CardList";
 import Overlay from "./Overlay";
+import { CardProvider, CardContext } from "./CardContext";
+
+const InfoContainer = () => {
+  const { time, flips } = useContext(CardContext);
+  return (
+    <div className="game-info-container">
+      <Info text="Time" val={time}></Info>
+      <Info text="Flips" val={flips}></Info>
+    </div>
+  );
+};
 
 const cardValues = [
   "Bat",
@@ -32,25 +43,16 @@ const shuffle = array => {
   }
 };
 
-const InfoContainer = () => {
-  return (
-    <div className="game-info-container">
-      <Info text="Time" val={100}></Info>
-      <Info text="Flips" val={0}></Info>
-    </div>
-  );
-};
-
 const GameContainer = () => {
-  const cards = cardValues.slice();
-  shuffle(cards);
+  const randomCards = cardValues.slice();
+  shuffle(randomCards);
 
   return (
     <div className="game-container">
-      <InfoContainer />
-      {cards.map((cardVal, i) => {
-        return <Card cardVal={cardVal} key={i}></Card>;
-      })}
+      <CardProvider randomCards={randomCards}>
+        <InfoContainer />
+        <CardList />
+      </CardProvider>
     </div>
   );
 };

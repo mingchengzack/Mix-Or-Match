@@ -10,7 +10,7 @@ const Overlay = props => {
     return (
       <div className={`overlay-text ${visibleClass}`}>
         {text}
-        <span class="overlay-text-small">Click to Restart</span>
+        <span className="overlay-text-small">Click to Restart</span>
       </div>
     );
 };

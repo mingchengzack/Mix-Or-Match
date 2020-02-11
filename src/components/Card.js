@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Cobweb from "../Assets/Images/Cobweb.png";
 import CobwebGrey from "../Assets/Images/CobwebGrey.png";
 import Spider from "../Assets/Images/Spider.png";
@@ -29,34 +29,56 @@ const getCard = cardVal => {
       return Pumpkin;
     case "Skull":
       return Skull;
+    default:
+      return Bat;
   }
 };
 
 const Card = props => {
-  const { cardVal } = props;
+  const { cardVal, isVisible, isMatched, handleClick } = props;
   const card = getCard(cardVal);
-  const [isVisible, setVisible] = useState(false);
-
   const visibleClass = isVisible ? "visible" : "";
+  const matchedClass = isMatched ? "card-matched" : "";
 
   return (
-    <div
-      className={`card ${visibleClass}`}
-      onClick={() => setVisible(!isVisible)}
-    >
-      <div className="card-back card-face">
-        <img className="cob-web cob-web-top-left" src={Cobweb} />
-        <img className="cob-web cob-web-top-right" src={Cobweb} />
-        <img className="cob-web cob-web-bottom-left" src={Cobweb} />
-        <img className="cob-web cob-web-bottom-right" src={Cobweb} />
-        <img className="spider" src={Spider} />
+    <div className={`card ${visibleClass} ${matchedClass}`}>
+      <div className="card-back card-face" onClick={handleClick}>
+        <img className="cob-web cob-web-top-left" src={Cobweb} alt="cob-web" />
+        <img className="cob-web cob-web-top-right" src={Cobweb} alt="cob-web" />
+        <img
+          className="cob-web cob-web-bottom-left"
+          src={Cobweb}
+          alt="cob-web"
+        />
+        <img
+          className="cob-web cob-web-bottom-right"
+          src={Cobweb}
+          alt="cob-web"
+        />
+        <img className="spider" src={Spider} alt="spider" />
       </div>
       <div className="card-front card-face">
-        <img className="cob-web cob-web-top-left" src={CobwebGrey} />
-        <img className="cob-web cob-web-top-right" src={CobwebGrey} />
-        <img className="cob-web cob-web-bottom-left" src={CobwebGrey} />
-        <img className="cob-web cob-web-bottom-right" src={CobwebGrey} />
-        <img className="card-value" src={card} />
+        <img
+          className="cob-web cob-web-top-left"
+          src={CobwebGrey}
+          alt="cob-web-grey"
+        />
+        <img
+          className="cob-web cob-web-top-right"
+          src={CobwebGrey}
+          alt="cob-web-grey"
+        />
+        <img
+          className="cob-web cob-web-bottom-left"
+          src={CobwebGrey}
+          alt="cob-web-grey"
+        />
+        <img
+          className="cob-web cob-web-bottom-right"
+          src={CobwebGrey}
+          alt="cob-web-grey"
+        />
+        <img className="card-value" src={card} alt="card-value" />
       </div>
     </div>
   );
