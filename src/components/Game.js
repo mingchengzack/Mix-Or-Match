@@ -16,34 +16,6 @@ const InfoContainer = () => {
   );
 };
 
-const cardValues = [
-  "Bat",
-  "Bones",
-  "Cauldron",
-  "Dracula",
-  "Eye",
-  "Ghost",
-  "Pumpkin",
-  "Skull",
-  "Bat",
-  "Bones",
-  "Cauldron",
-  "Dracula",
-  "Eye",
-  "Ghost",
-  "Pumpkin",
-  "Skull"
-];
-
-const shuffle = array => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * i);
-    const temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-  }
-};
-
 const GameContainer = () => {
   return (
     <div className="game-container">
@@ -54,16 +26,13 @@ const GameContainer = () => {
 };
 
 const Game = () => {
-  const randomCards = cardValues.slice();
-  shuffle(randomCards);
-
   return (
     <div>
-      <GameProvider randomCards={randomCards}>
+      <GameProvider>
         <Title />
-        <Overlay text="Click to Start" isVisible={false} over={false} />
-        <Overlay text="GAME OVER!" isVisible={false} over={true} win={false} />
-        <Overlay text="VICTORY!" isVisible={false} over={true} win={true} />
+        <Overlay text="Click to Start" />
+        <Overlay text="GAME OVER!" />
+        <Overlay text="VICTORY!" />
         <GameContainer />
       </GameProvider>
     </div>

@@ -1,9 +1,38 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, createContext, useRef } from "react";
+
+const cardValues = [
+  "Bat",
+  "Bones",
+  "Cauldron",
+  "Dracula",
+  "Eye",
+  "Ghost",
+  "Pumpkin",
+  "Skull",
+  "Bat",
+  "Bones",
+  "Cauldron",
+  "Dracula",
+  "Eye",
+  "Ghost",
+  "Pumpkin",
+  "Skull"
+];
+
+const shuffle = array => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * i);
+    const temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
+};
 
 export const GameContext = createContext();
 
 export const GameProvider = props => {
-  const randomCards = props.randomCards;
+  const randomCards = cardValues.slice();
+  shuffle(randomCards);
 
   const [cards, setCards] = useState([
     {
@@ -103,25 +132,54 @@ export const GameProvider = props => {
       isMatched: false
     }
   ]);
-  const [time, setTime] = useState(5);
+  const [remaining, setRemaining] = useState(8);
+  const [time, setTime] = useState(100);
   const [flips, setFlips] = useState(0);
   const [currentFlipped, setCurrentFlipped] = useState([]);
+  const [game, startGame] = useState(false);
+  const [over, gameOver] = useState(false);
+  const [win, setWin] = useState(false);
 
-  // let countdown;
+  let stopTime = useRef(false);
 
-  // const startCountdown = () => {
-  //   return setInterval(() => {
-  //     setTime(time - 1);
-  //     if (time === 0) gameOver(countdown);
-  //   }, 1000);
-  // };
+  // Restart Game
+  const RestartGame = () => {
+    let newCards = cards.map((card, i) => {
+      return { id: i, val: card.val, isVisible: false, isMatched: false };
+    });
+    setCards(newCards);
+    setTime(100);
+    setRemaining(8);
+    setCurrentFlipped([]);
+    setFlips(0);
+    gameOver(false);
+    setWin(false);
+    stopTime.current = false;
 
-  // countdown = startCountdown();
+    setTimeout(() => {
+      const randomCards = cardValues.slice();
+      shuffle(randomCards);
+      newCards = randomCards.map((card, i) => {
+        return { id: i, val: card, isVisible: false, isMatched: false };
+      });
+      setCards(newCards);
+    }, 300);
+  };
 
-  // const gameOver = () => {
-  //   clearInterval(countdown);
-  // };
+  // Handle game start/over and timer side effects
+  useEffect(() => {
+    if (game) {
+      setTimeout(() => {
+        if (time === 0) {
+          gameOver(true);
+        } else {
+          if (!stopTime.current) setTime(time - 1);
+        }
+      }, 1000);
+    }
+  }, [game, time, stopTime]);
 
+  // Handle matched/non-matched cards side effects
   useEffect(() => {
     if (currentFlipped.length === 2) {
       const setMatched = () => {
@@ -147,11 +205,25 @@ export const GameProvider = props => {
       } else {
         setTimeout(() => {
           setMatched();
+          setRemaining(prev => prev - 1);
         }, 100);
       }
-      setCurrentFlipped([]);
+      setTimeout(() => {
+        setCurrentFlipped([]);
+      }, 600);
     }
   }, [currentFlipped]);
+
+  // Handle win condition side effect
+  useEffect(() => {
+    if (remaining === 0) {
+      stopTime.current = true;
+      setTimeout(() => {
+        gameOver(true);
+        setWin(true);
+      }, 500);
+    }
+  }, [remaining]);
 
   return (
     <GameContext.Provider
@@ -162,8 +234,15 @@ export const GameProvider = props => {
         setTime,
         flips,
         setFlips,
-
-        setCurrentFlipped
+        currentFlipped,
+        setCurrentFlipped,
+        game,
+        startGame,
+        win,
+        setWin,
+        over,
+        gameOver,
+        RestartGame
       }}
     >
       {props.children}

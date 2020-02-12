@@ -3,13 +3,18 @@ import Card from "./Card";
 import { GameContext } from "./GameContext";
 
 const CardList = () => {
-  const { cards, setCards, flips, setFlips, setCurrentFlipped } = useContext(
-    GameContext
-  );
+  const {
+    cards,
+    setCards,
+    flips,
+    setFlips,
+    currentFlipped,
+    setCurrentFlipped
+  } = useContext(GameContext);
 
   const handleClick = useCallback(
     id => {
-      if (cards[id].isVisible) return;
+      if (cards[id].isVisible || currentFlipped.length === 2) return;
       setFlips(flips + 1);
       setCards(prevCards => {
         prevCards[id].isVisible = true;
@@ -19,7 +24,7 @@ const CardList = () => {
         return [...prevCards, cards[id]];
       });
     },
-    [cards, flips, setFlips, setCards, setCurrentFlipped]
+    [cards, flips, setFlips, setCards, currentFlipped, setCurrentFlipped]
   );
 
   return (
