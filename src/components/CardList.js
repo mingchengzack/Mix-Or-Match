@@ -1,9 +1,11 @@
 import React, { useContext, useCallback } from "react";
 import Card from "./Card";
-import { CardContext } from "./CardContext";
+import { GameContext } from "./GameContext";
 
 const CardList = () => {
-  const { cards, setCards, flips, setFlips } = useContext(CardContext);
+  const { cards, setCards, flips, setFlips, setCurrentFlipped } = useContext(
+    GameContext
+  );
 
   const handleClick = useCallback(
     id => {
@@ -13,8 +15,11 @@ const CardList = () => {
         prevCards[id].isVisible = true;
         return [...prevCards];
       });
+      setCurrentFlipped(prevCards => {
+        return [...prevCards, cards[id]];
+      });
     },
-    [cards, flips, setFlips, setCards]
+    [cards, flips, setFlips, setCards, setCurrentFlipped]
   );
 
   return (

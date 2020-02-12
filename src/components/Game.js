@@ -3,10 +3,11 @@ import Title from "./Title";
 import Info from "./Info";
 import CardList from "./CardList";
 import Overlay from "./Overlay";
-import { CardProvider, CardContext } from "./CardContext";
+import { GameProvider, GameContext } from "./GameContext";
 
 const InfoContainer = () => {
-  const { time, flips } = useContext(CardContext);
+  const { time, flips } = useContext(GameContext);
+
   return (
     <div className="game-info-container">
       <Info text="Time" val={time}></Info>
@@ -44,27 +45,27 @@ const shuffle = array => {
 };
 
 const GameContainer = () => {
-  const randomCards = cardValues.slice();
-  shuffle(randomCards);
-
   return (
     <div className="game-container">
-      <CardProvider randomCards={randomCards}>
-        <InfoContainer />
-        <CardList />
-      </CardProvider>
+      <InfoContainer />
+      <CardList />
     </div>
   );
 };
 
 const Game = () => {
+  const randomCards = cardValues.slice();
+  shuffle(randomCards);
+
   return (
     <div>
-      <Title />
-      <Overlay text="Click to Start" isVisible={false} over={false} />
-      <Overlay text="GAME OVER!" isVisible={false} over={true} win={false} />
-      <Overlay text="VICTORY!" isVisible={false} over={true} win={true} />
-      <GameContainer />
+      <GameProvider randomCards={randomCards}>
+        <Title />
+        <Overlay text="Click to Start" isVisible={false} over={false} />
+        <Overlay text="GAME OVER!" isVisible={false} over={true} win={false} />
+        <Overlay text="VICTORY!" isVisible={false} over={true} win={true} />
+        <GameContainer />
+      </GameProvider>
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import React, { useState, createContext } from "react";
+import React, { useState, useEffect, createContext } from "react";
 
-export const CardContext = createContext();
+export const GameContext = createContext();
 
-export const CardProvider = props => {
+export const GameProvider = props => {
   const randomCards = props.randomCards;
 
   const [cards, setCards] = useState([
@@ -32,7 +32,7 @@ export const CardProvider = props => {
     },
     {
       id: 4,
-      vall: randomCards[4],
+      val: randomCards[4],
       isVisible: false,
       isMatched: false
     },
@@ -103,22 +103,70 @@ export const CardProvider = props => {
       isMatched: false
     }
   ]);
-
-  const [time, setTime] = useState(100);
+  const [time, setTime] = useState(5);
   const [flips, setFlips] = useState(0);
+  const [currentFlipped, setCurrentFlipped] = useState([]);
+
+  // let countdown;
+
+  // const startCountdown = () => {
+  //   return setInterval(() => {
+  //     setTime(time - 1);
+  //     if (time === 0) gameOver(countdown);
+  //   }, 1000);
+  // };
+
+  // countdown = startCountdown();
+
+  // const gameOver = () => {
+  //   clearInterval(countdown);
+  // };
+
+  useEffect(() => {
+    if (currentFlipped.length === 2) {
+      const setMatched = () => {
+        setCards(prevCards => {
+          prevCards[currentFlipped[0].id].isMatched = true;
+          prevCards[currentFlipped[1].id].isMatched = true;
+          return [...prevCards];
+        });
+      };
+
+      const resetCards = () => {
+        setCards(prevCards => {
+          prevCards[currentFlipped[0].id].isVisible = false;
+          prevCards[currentFlipped[1].id].isVisible = false;
+          return [...prevCards];
+        });
+      };
+
+      if (currentFlipped[0].val !== currentFlipped[1].val) {
+        setTimeout(() => {
+          resetCards();
+        }, 600);
+      } else {
+        setTimeout(() => {
+          setMatched();
+        }, 100);
+      }
+      setCurrentFlipped([]);
+    }
+  }, [currentFlipped]);
 
   return (
-    <CardContext.Provider
+    <GameContext.Provider
       value={{
         cards,
         setCards,
         time,
         setTime,
         flips,
-        setFlips
+        setFlips,
+
+        setCurrentFlipped
       }}
     >
       {props.children}
-    </CardContext.Provider>
+    </GameContext.Provider>
   );
 };
