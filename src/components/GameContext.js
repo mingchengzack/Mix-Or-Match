@@ -31,6 +31,32 @@ const shuffle = array => {
 export const GameContext = createContext();
 
 export const GameProvider = props => {
+  const [gameMusic] = useState(
+    new Audio(
+      "https://raw.githubusercontent.com/mingchengzack/Mix-Or-Match/master/src/Assets/Audio/creepy.mp3"
+    )
+  );
+  const [flipMusic] = useState(
+    new Audio(
+      "https://raw.githubusercontent.com/mingchengzack/Mix-Or-Match/master/src/Assets/Audio/flip.wav"
+    )
+  );
+  const [matchMusic] = useState(
+    new Audio(
+      "https://raw.githubusercontent.com/mingchengzack/Mix-Or-Match/master/src/Assets/Audio/match.wav"
+    )
+  );
+  const [winMusic] = useState(
+    new Audio(
+      "https://raw.githubusercontent.com/mingchengzack/Mix-Or-Match/master/src/Assets/Audio/victory.wav"
+    )
+  );
+  const [overMusic] = useState(
+    new Audio(
+      "https://raw.githubusercontent.com/mingchengzack/Mix-Or-Match/master/src/Assets/Audio/gameOver.wav"
+    )
+  );
+
   const randomCards = cardValues.slice();
   shuffle(randomCards);
 
@@ -157,6 +183,7 @@ export const GameProvider = props => {
     stopTime.current = false;
 
     setTimeout(() => {
+      gameMusic.play();
       const randomCards = cardValues.slice();
       shuffle(randomCards);
       newCards = randomCards.map((card, i) => {
@@ -169,15 +196,19 @@ export const GameProvider = props => {
   // Handle game start/over and timer side effects
   useEffect(() => {
     if (game) {
+      gameMusic.play();
       setTimeout(() => {
         if (time === 0) {
+          gameMusic.pause();
+          gameMusic.currentTime = 0;
+          overMusic.play();
           gameOver(true);
         } else {
           if (!stopTime.current) setTime(time - 1);
         }
       }, 1000);
     }
-  }, [game, time, stopTime]);
+  }, [game, time, stopTime, gameMusic, overMusic]);
 
   // Handle matched/non-matched cards side effects
   useEffect(() => {
@@ -207,23 +238,29 @@ export const GameProvider = props => {
           setMatched();
           setRemaining(prev => prev - 1);
         }, 100);
+        setTimeout(() => {
+          matchMusic.play();
+        }, 350);
       }
       setTimeout(() => {
         setCurrentFlipped([]);
       }, 600);
     }
-  }, [currentFlipped]);
+  }, [currentFlipped, matchMusic]);
 
   // Handle win condition side effect
   useEffect(() => {
     if (remaining === 0) {
       stopTime.current = true;
       setTimeout(() => {
+        gameMusic.pause();
+        gameMusic.currentTime = 0;
         gameOver(true);
+        winMusic.play();
         setWin(true);
       }, 500);
     }
-  }, [remaining]);
+  }, [remaining, gameMusic, winMusic]);
 
   return (
     <GameContext.Provider
@@ -242,7 +279,8 @@ export const GameProvider = props => {
         setWin,
         over,
         gameOver,
-        RestartGame
+        RestartGame,
+        flipMusic
       }}
     >
       {props.children}

@@ -9,11 +9,13 @@ const CardList = () => {
     flips,
     setFlips,
     currentFlipped,
-    setCurrentFlipped
+    setCurrentFlipped,
+    flipMusic
   } = useContext(GameContext);
 
   const handleClick = id => {
     if (cards[id].isVisible || currentFlipped.length === 2) return;
+    flipMusic.play();
     setFlips(flips + 1);
     setCards(prevCards => {
       prevCards[id].isVisible = true;
